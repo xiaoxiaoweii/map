@@ -35,11 +35,19 @@ export default {
       },
       deep: true,
     },
+    // 经纬度网格状态
+    "toolList.1": {
+      handler: function(val) {
+        this.setGridLayer(val.active)
+      },
+      deep: true
+    }
   },
   methods: {
     ...mapMutations({
       setToolItem: "tool/setToolItem",
-      setDoubleScreen: 'earth/setDoubleScreen'
+      setDoubleScreen: 'earth/setDoubleScreen',
+      setGridLayer: 'earth/setGridLayer'
     }),
     setTool(item, index) {
       this.setToolItem({ item, index });

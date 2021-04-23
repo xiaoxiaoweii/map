@@ -41,6 +41,7 @@ export default {
           type: "left",
           map: null,
           marker: null,
+          grid: null,
         },
       ],
       // 定时器，1秒只响应一次
@@ -61,6 +62,7 @@ export default {
           type: "left",
           map: null,
           marker: null,
+          grid: null,
         },
       ],
       // 双屏属性
@@ -74,6 +76,7 @@ export default {
           type: "left",
           map: null,
           marker: null,
+          grid: null,
         },
         {
           style: {
@@ -84,6 +87,7 @@ export default {
           type: "right",
           map: null,
           marker: null,
+          grid: null,
         },
       ],
     };
@@ -91,14 +95,22 @@ export default {
   computed: {
     ...mapState({
       doubleScreenFlag: (s) => s.earth.doubleScreenFlag,
+      gridFlag: (s) => s.earth.gridFlag,
     }),
   },
   watch: {
+    // 是否双屏
     doubleScreenFlag: {
       handler: function (val) {
         this.setDoubleScreen(val);
       },
       deep: true,
+    },
+    // 是否载入经纬度网格
+    gridFlag: {
+      handler: function (val) {
+        this.setGridLayer(val);
+      },
     },
   },
   mounted() {
@@ -111,16 +123,31 @@ export default {
     ...mapMutations({
       setExtent: "earth/setExtent",
     }),
+    // 设置经纬度网格
+    setGridLayer(active) {
+      if (active) {
+        this.loadGrid();
+        return;
+      }
+      if (!active) {
+        this.mapList.forEach((e, i) => {
+          if (e.grid) {
+            e.grid.remove();
+          }
+          e.grid = null
+        });
+      }
+    },
     // 设置双屏 传入 true 开启双屏 传入 false 关闭双屏
     setDoubleScreen(active) {
       // 移除现在的地图实例
-      console.log(this.mapList);
       this.mapList.forEach((e, i) => {
         e.map.remove();
       });
       active
         ? (this.mapList = this.doubleScreenOptions)
         : (this.mapList = this.singleMapOptions);
+      // 重新初始化地图
       this.$nextTick(() => {
         this.initMap();
       });
@@ -146,6 +173,10 @@ export default {
           subdomains: ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"],
         });
         layer.addTo(e.map);
+        // 根据经纬度选项状态判断是否添加经纬度网格
+        if (this.gridFlag) {
+          this.loadGrid();
+        }
         // 视角
         e.map.setView([30.2, 119.7], 5);
         // 加载边界
@@ -165,6 +196,19 @@ export default {
         e.map.on("mousemove", (e) => {
           this.onMoveUp(e);
         });
+      });
+    },
+    // 载入经纬度网格
+    loadGrid() {
+      this.mapList.forEach((e, i) => {
+        if (!e.grid) {
+          e.grid = L.latlngGraticule({
+            showLabel: true,
+            dashArray: [4, 4],
+            fontColor: "#999999",
+            zoomInterval: this.$constants.initLeafletMap.graticule_zoom,
+          }).addTo(e.map);
+        }
       });
     },
     // 鼠标移动变化
