@@ -32,6 +32,8 @@
 
 <script>
 /* eslint-disable */
+const layerUrl =
+  "http:////map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}";
 import { mapState, mapMutations } from "vuex";
 export default {
   name: "leaflet-map",
@@ -110,12 +112,9 @@ export default {
           ],
           zoomControl: false,
         });
-        let layer = L.tileLayer(
-          "http:////map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
-          {
-            subdomains: ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"],
-          }
-        );
+        let layer = L.tileLayer(layerUrl, {
+          subdomains: ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"],
+        });
         layer.addTo(e.map);
         // 视角
         e.map.setView([30.2, 119.7], 5);
@@ -130,8 +129,34 @@ export default {
           },
           zoom: (e) => {
             this.maplink(e);
-          },
+          }
         });
+        // 监听鼠标移动事件
+        e.map.on("mousemove", (e) => {
+          this.onMoveUp(e);
+        });
+      });
+    },
+    // 鼠标移动变化
+    onMoveUp(e) {
+      this.mapList.forEach((r, i) => {
+        // 当前移动的地图不显示marker
+        // 清除之前的marker
+        if (r.marker) {
+          r.marker.remove();
+        }
+        if (e.target._container.id === r.id) {
+          return;
+        }
+        // 声明marker样式
+        let myIcon = L.icon({
+          iconUrl: "./images/hand.svg",
+          iconSize: [17, 23],
+        });
+        // 添加移动marker
+        r.marker = L.marker(e.latlng, {
+          icon: myIcon,
+        }).addTo(r.map);
       });
     },
     // 视角变化 其他地图联动
@@ -142,13 +167,12 @@ export default {
     },
     // 加载边界
     loadBoundaries(map) {
-      const that = this;
       this.$jQuery.getJSON(
         "./static/geojson/provinces.geojson",
-        function (data) {
+        (data) => {
           L.geoJSON(data, {
             style: (feature) => {
-              return that.$constants.boundaryOptions;
+              return this.$constants.boundaryOptions;
             },
           }).addTo(map);
         }
