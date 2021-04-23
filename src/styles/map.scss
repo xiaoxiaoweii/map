@@ -1,12 +1,10 @@
 /* 底图样式 */
 .map_wrapper {
-    #map {
-        width: 50%;
+    #leftMap {
         height: calc(100vh);
         float: left;
     }
-    #subMap {
-        width: 50%;
+    #rightMap {
         height: calc(100vh);
         float: left;
     }

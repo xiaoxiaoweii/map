@@ -1,8 +1,25 @@
 <template>
   <!-- eslint-disable -->
-  <div class="map_wrapper" id="map_wrapper">
-    <div id="map" ref="map"></div>
-    <div id="subMap" ref="subMap"></div>
+  <div
+    class="map_wrapper"
+    id="map_wrapper"
+  >
+    <div
+      v-for="(item,index) in mapList"
+      :key="index"
+      :id="item.id"
+      :ref="item.id"
+      :style="{ width: item.style.width}"
+    ></div>
+    <!-- <div
+      :style=""
+      id="map"
+      ref="map"
+    ></div>
+    <div
+      id="subMap"
+      ref="subMap"
+    ></div> -->
     <div class="other_btn">
       <div class="latlng">
         <img src="@/assets/images/map/position.svg" />
@@ -20,6 +37,29 @@ export default {
   name: "leaflet-map",
   data() {
     return {
+      // 双屏属性
+      mapList: [
+        {
+          style: {
+            width: "50%",
+          },
+          name: "左屏",
+          id: "leftMap",
+          type: "left",
+          map: null,
+          marker: null,
+        },
+        {
+          style: {
+            width: "50%",
+          },
+          name: "右屏",
+          id: "rightMap",
+          type: "right",
+          map: null,
+          marker: null,
+        },
+      ],
       // 定时器，1秒只响应一次
       timer: null,
       // 地图载体
@@ -45,101 +85,78 @@ export default {
     },
   },
   mounted() {
-    // 地图初始化
-    this.initMap();
-    this.initSubMap();
+    this.$nextTick(() => {
+      // 地图初始化
+      this.initMap();
+    });
   },
   methods: {
     ...mapMutations({
       setExtent: "earth/setExtent",
     }),
-    // 初始化主地图
+    // 初始化地图
     initMap() {
-      /* 地图 */
-      let map = L.map("map", {
-        attributionControl: false,
-        // 墨卡托投影
-        crs: L.CRS.EPSG3857,
-        minZoom: 2,
-        maxZoom: 13,
-        worldCopyJump: true,
-        maxBounds: [
-          [1800, -1800],
-          [-1800, 1800],
-        ],
-        zoomControl: false,
+      this.mapList.forEach((e, i) => {
+        e.map = L.map(e.id, {
+          attributionControl: false,
+          // 墨卡托投影
+          crs: L.CRS.EPSG3857,
+          minZoom: 2,
+          maxZoom: 13,
+          worldCopyJump: true,
+          maxBounds: [
+            [1800, -1800],
+            [-1800, 1800],
+          ],
+          zoomControl: false,
+        });
+        let layer = L.tileLayer(
+          "http:////map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
+          {
+            subdomains: ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"],
+          }
+        );
+        layer.addTo(e.map);
+        // 视角
+        e.map.setView([30.2, 119.7], 5);
+        // 加载边界
+        this.loadBoundaries(e.map);
+        // 显示经纬度
+        this.showLatlon(e.map);
+        // 监听各个地图移动和放大缩小事件
+        e.map.on({
+          drag: (e) => {
+            this.maplink(e);
+          },
+          zoom: (e) => {
+            this.maplink(e);
+          },
+        });
       });
-      let layer = L.tileLayer(
-        "http:////map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
-        {
-          subdomains: ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"],
-        }
-      );
-      layer.addTo(map);
-      map.setView([30.2, 119.7], 5);
-      window.latlngGraticule = L.latlngGraticule({
-        showLabel: true,
-        dashArray: [4, 4],
-        fontColor: "#999999",
-        zoomInterval: this.$constants.initLeafletMap.graticule_zoom,
-      }).addTo(map);
-      this.map = map;
-      window.map = map;
-      // 自动显示经纬度
-      this.showLatlon();
-      // 加载边界
-      this.loadBoundaries(window.map);
-      // 范围变化
-      this.changeMove();
     },
-    // 辅助地图
-    initSubMap() {
-      /* 地图 */
-      let subMap = L.map("subMap", {
-        attributionControl: false,
-        // 墨卡托投影
-        crs: L.CRS.EPSG3857,
-        minZoom: 2,
-        maxZoom: 13,
-        worldCopyJump: true,
-        maxBounds: [
-          [1800, -1800],
-          [-1800, 1800],
-        ],
-        zoomControl: false,
+    // 视角变化 其他地图联动
+    maplink(e) {
+      this.mapList.forEach((r, i) => {
+        r.map.setView(e.target.getCenter(), e.target._zoom);
       });
-      let layer = L.tileLayer(
-        "http:////map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}",
-        {
-          subdomains: ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"],
-        }
-      );
-      layer.addTo(subMap);
-      L.latlngGraticule({
-        showLabel: true,
-        dashArray: [4, 4],
-        fontColor: "#999999",
-        zoomInterval: this.$constants.initLeafletMap.graticule_zoom,
-      }).addTo(subMap);
-      subMap.setView([30.2, 119.7], 5);
-      window.subMap = subMap
-      // 加载边界
-      this.loadBoundaries(window.subMap);
     },
     // 加载边界
     loadBoundaries(map) {
       const that = this;
-      this.$jQuery.getJSON("./static/geojson/provinces.geojson", function (data) {
-        L.geoJSON(data, {
-          style: (feature) => {
-            return that.$constants.boundaryOptions;
-          },
-        }).addTo(map);
-      });
+      this.$jQuery.getJSON(
+        "./static/geojson/provinces.geojson",
+        function (data) {
+          L.geoJSON(data, {
+            style: (feature) => {
+              return that.$constants.boundaryOptions;
+            },
+          }).addTo(map);
+        }
+      );
     },
     // 显示经纬度
-    showLatlon() {
-      window.map.on("mousemove", (e) => {
+    showLatlon(map) {
+      map.on("mousemove", (e) => {
         let latlng = L.latLng(e.latlng.lat, e.latlng.lng).wrap();
         this.position.latNum =
           latlng.lat > 0
