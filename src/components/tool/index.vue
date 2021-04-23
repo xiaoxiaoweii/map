@@ -25,9 +25,7 @@ export default {
   },
   watch: {
     toolList: {
-      handler: function (val) {
-        // console.log(`工具栏变化`);
-      },
+      handler: function (val) {},
       deep: true,
     },
     // 双屏状态

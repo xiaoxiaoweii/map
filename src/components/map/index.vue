@@ -11,15 +11,6 @@
       :ref="item.id"
       :style="{ width: item.style.width}"
     ></div>
-    <!-- <div
-      :style=""
-      id="map"
-      ref="map"
-    ></div>
-    <div
-      id="subMap"
-      ref="subMap"
-    ></div> -->
     <div class="other_btn">
       <div class="latlng">
         <img src="@/assets/images/map/position.svg" />
@@ -43,6 +34,39 @@ export default {
       mapList: [
         {
           style: {
+            width: "100%",
+          },
+          name: "左屏",
+          id: "leftMap",
+          type: "left",
+          map: null,
+          marker: null,
+        },
+      ],
+      // 定时器，1秒只响应一次
+      timer: null,
+      // 经纬度显示
+      position: {
+        latNum: null,
+        lonNum: null,
+      },
+      // 单屏属性
+      singleMapOptions: [
+        {
+          style: {
+            width: "100%",
+          },
+          name: "左屏",
+          id: "leftMap",
+          type: "left",
+          map: null,
+          marker: null,
+        },
+      ],
+      // 双屏属性
+      doubleScreenOptions: [
+        {
+          style: {
             width: "50%",
           },
           name: "左屏",
@@ -62,15 +86,6 @@ export default {
           marker: null,
         },
       ],
-      // 定时器，1秒只响应一次
-      timer: null,
-      // 地图载体
-      map: "",
-      // 经纬度显示
-      position: {
-        latNum: null,
-        lonNum: null,
-      },
     };
   },
   computed: {
@@ -81,7 +96,7 @@ export default {
   watch: {
     doubleScreenFlag: {
       handler: function (val) {
-        console.log("开启双屏", val);
+        this.setDoubleScreen(val);
       },
       deep: true,
     },
@@ -96,8 +111,23 @@ export default {
     ...mapMutations({
       setExtent: "earth/setExtent",
     }),
+    // 设置双屏 传入 true 开启双屏 传入 false 关闭双屏
+    setDoubleScreen(active) {
+      // 移除现在的地图实例
+      console.log(this.mapList);
+      this.mapList.forEach((e, i) => {
+        e.map.remove();
+      });
+      active
+        ? (this.mapList = this.doubleScreenOptions)
+        : (this.mapList = this.singleMapOptions);
+      this.$nextTick(() => {
+        this.initMap();
+      });
+    },
     // 初始化地图
     initMap() {
+      console.log(this.mapList);
       this.mapList.forEach((e, i) => {
         e.map = L.map(e.id, {
           attributionControl: false,
@@ -129,7 +159,7 @@ export default {
           },
           zoom: (e) => {
             this.maplink(e);
-          }
+          },
         });
         // 监听鼠标移动事件
         e.map.on("mousemove", (e) => {
@@ -167,16 +197,13 @@ export default {
     },
     // 加载边界
     loadBoundaries(map) {
-      this.$jQuery.getJSON(
-        "./static/geojson/provinces.geojson",
-        (data) => {
-          L.geoJSON(data, {
-            style: (feature) => {
-              return this.$constants.boundaryOptions;
-            },
-          }).addTo(map);
-        }
-      );
+      this.$jQuery.getJSON("./static/geojson/provinces.geojson", (data) => {
+        L.geoJSON(data, {
+          style: (feature) => {
+            return this.$constants.boundaryOptions;
+          },
+        }).addTo(map);
+      });
     },
     // 显示经纬度
     showLatlon(map) {

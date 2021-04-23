@@ -73,7 +73,6 @@ const actions = {
 
 const mutations = {
   setToolItem(state,obj) {
-    console.log(state,obj);
     state.toolList[obj.index].active = !state.toolList[obj.index].active
   }
 }
