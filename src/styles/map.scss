@@ -1,0 +1,43 @@
+/* 底图样式 */
+.map_wrapper {
+    #map {
+        width: 50%;
+        height: calc(100vh);
+        float: left;
+    }
+    #subMap {
+        width: 50%;
+        height: calc(100vh);
+        float: left;
+    }
+    .other_btn {
+        z-index: 1000;
+        position: fixed;
+        bottom: 54px;
+        right: 11px;
+        display: flex;
+        align-items: center;
+        background-size: 100%;
+        background: url("../assets/images/map/bcground.png") no-repeat;
+        padding-left: 14px;
+        .latlng {
+            width: 190px;
+            display: flex;
+            align-items: center;
+            img {
+                width: 18px;
+            }
+            div {
+                // width: 65px;
+                margin-left: 2px;
+            }
+            .other_lat,
+            .other_lon {
+                color: #fff;
+                font-size: 16px;
+                font-weight: normal;
+                padding: 3px;
+            }
+        }
+    }
+}
