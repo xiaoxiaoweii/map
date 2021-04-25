@@ -41,13 +41,29 @@ export default {
         this.setGridLayer(val.active)
       },
       deep: true
+    },
+    // 测距
+    "toolList.3": {
+      handler: function(val) {
+        this.setDistanceMeasure(val.active)
+      },
+      deep: true
+    },
+    // 测面积
+    "toolList.4": {
+      handler: function(val) {
+        this.setAreaMeasure(val.active)
+      },
+      deep: true
     }
   },
   methods: {
     ...mapMutations({
       setToolItem: "tool/setToolItem",
       setDoubleScreen: 'earth/setDoubleScreen',
-      setGridLayer: 'earth/setGridLayer'
+      setGridLayer: 'earth/setGridLayer',
+      setDistanceMeasure: 'earth/setDistanceMeasure',
+      setAreaMeasure: 'earth/setAreaMeasure'
     }),
     setTool(item, index) {
       this.setToolItem({ item, index });

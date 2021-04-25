@@ -1,15 +1,12 @@
 <template>
   <!-- eslint-disable -->
-  <div
-    class="map_wrapper"
-    id="map_wrapper"
-  >
+  <div class="map_wrapper" id="map_wrapper">
     <div
-      v-for="(item,index) in mapList"
+      v-for="(item, index) in mapList"
       :key="index"
       :id="item.id"
       :ref="item.id"
-      :style="{ width: item.style.width}"
+      :style="{ width: item.style.width }"
     ></div>
     <div class="other_btn">
       <div class="latlng">
@@ -23,13 +20,25 @@
 
 <script>
 /* eslint-disable */
+import toolBar from "@/utils/tool.js";
 const layerUrl =
   "http:////map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, createLogger } from "vuex";
 export default {
   name: "leaflet-map",
   data() {
     return {
+      positionObj: {
+        unit: this.unit,
+        latDirection: this.latDirection,
+        lngDirection: this.lngDirection,
+        lngminute: this.lngminute,
+        lngdegree: this.lngdegree,
+        latminute: this.latminute,
+        latdegree: this.latdegree,
+      },
+      // 工具对象
+      tool: null,
       // 双屏属性
       mapList: [
         {
@@ -96,6 +105,8 @@ export default {
     ...mapState({
       doubleScreenFlag: (s) => s.earth.doubleScreenFlag,
       gridFlag: (s) => s.earth.gridFlag,
+      distanceFlag: (s) => s.earth.distanceFlag,
+      areaMeasureFlag: (s) => s.earth.areaMeasureFlag,
     }),
   },
   watch: {
@@ -110,6 +121,22 @@ export default {
     gridFlag: {
       handler: function (val) {
         this.setGridLayer(val);
+      },
+    },
+    // 测距
+    distanceFlag: {
+      handler: function (val) {
+        this.tool = new toolBar(window.map, this.positionObj);
+        this.tool.clearAreaMeasure();
+        this.tool.measure();
+      },
+    },
+    // 测距
+    areaMeasureFlag: {
+      handler: function (val) {
+        this.tool = new toolBar(window.map, this.positionObj);
+        this.tool.clearAreaMeasure();
+        this.tool.measurearea();
       },
     },
   },
@@ -134,7 +161,7 @@ export default {
           if (e.grid) {
             e.grid.remove();
           }
-          e.grid = null
+          e.grid = null;
         });
       }
     },
@@ -154,7 +181,6 @@ export default {
     },
     // 初始化地图
     initMap() {
-      console.log(this.mapList);
       this.mapList.forEach((e, i) => {
         e.map = L.map(e.id, {
           attributionControl: false,
@@ -197,6 +223,7 @@ export default {
           this.onMoveUp(e);
         });
       });
+      window.map = this.mapList[0].map;
     },
     // 载入经纬度网格
     loadGrid() {

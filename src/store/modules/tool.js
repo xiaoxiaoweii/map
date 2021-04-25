@@ -24,14 +24,14 @@ const state = {
     },
     {
       name: '测距',
-      activeSrc: require('@/assets/images/tool/distanceActive.svg'),
+      activeSrc: require('@/assets/images/tool/distanceDeactive.svg'),
       deactiveSrc: require('@/assets/images/tool/distanceDeactive.svg'),
       type: 'distance',
       active: false
     },
     {
       name: '面积',
-      activeSrc: require('@/assets/images/tool/areaActive.svg'),
+      activeSrc: require('@/assets/images/tool/areaDeactive.svg'),
       deactiveSrc: require('@/assets/images/tool/areaDeactive.svg'),
       type: 'area',
       active: false

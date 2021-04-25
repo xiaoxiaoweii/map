@@ -4,7 +4,11 @@ const state = {
   // 是否开启双屏
   doubleScreenFlag: false,
   // 是否载入经纬度网格
-  gridFlag: false
+  gridFlag: false,
+  // 测距
+  distanceFlag: false,
+  // 测面积
+  areaMeasureFlag: false
 }
 
 const actions = {
@@ -20,6 +24,13 @@ const mutations = {
   },
   setGridLayer(state,val) {
     state.gridFlag = val
+  },
+  setDistanceMeasure(state,val) {
+    state.distanceFlag = val
+  },
+  setAreaMeasure(state,val) {
+    state.areaMeasureFlag = val
+    console.log(state.areaMeasureFlag)
   }
 }
 
