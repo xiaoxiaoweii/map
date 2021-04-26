@@ -92,5 +92,7 @@ export const constants = {
     color: "#FFFF00",
     fillOpacity: 0,
     weight: 1
-  }
+  },
+  title: '天气卫星遥感监测系统',
+  titleImg: require('@/assets/images/logo/logo.png')
 }

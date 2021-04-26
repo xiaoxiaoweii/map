@@ -30,7 +30,6 @@ const mutations = {
   },
   setAreaMeasure(state,val) {
     state.areaMeasureFlag = val
-    console.log(state.areaMeasureFlag)
   }
 }
 
