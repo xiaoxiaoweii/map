@@ -29,28 +29,28 @@ export default {
       deep: true,
     },
     // 双屏状态
-    "toolList.0": {
-      handler: function (val) {
-        this.setDoubleScreen(val.active)
-      },
-      deep: true,
-    },
+    // "toolList.0": {
+    //   handler: function (val) {
+    //     this.setDoubleScreen(val.active)
+    //   },
+    //   deep: true,
+    // },
     // 经纬度网格状态
-    "toolList.1": {
+    "toolList.0": {
       handler: function(val) {
         this.setGridLayer(val.active)
       },
       deep: true
     },
     // 测距
-    "toolList.3": {
+    "toolList.1": {
       handler: function(val) {
         this.setDistanceMeasure(val.active)
       },
       deep: true
     },
     // 测面积
-    "toolList.4": {
+    "toolList.2": {
       handler: function(val) {
         this.setAreaMeasure(val.active)
       },
