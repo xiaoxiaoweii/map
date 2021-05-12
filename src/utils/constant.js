@@ -93,6 +93,8 @@ export const constants = {
     fillOpacity: 0,
     weight: 1
   },
-  title: '天气卫星遥感监测系统',
-  titleImg: require('@/assets/images/logo/logo.png')
+  title: 'weather',
+  titleImg: require('@/assets/images/logo/logo.png'),
+  // 和风天气key
+  qweatherKey: '813c5722a038425e83da2cbaf33a6b8c'
 }

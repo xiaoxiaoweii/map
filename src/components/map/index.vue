@@ -144,12 +144,23 @@ export default {
     this.$nextTick(() => {
       // 地图初始化
       this.initMap();
+      this.getCityInfo()
     });
   },
   methods: {
     ...mapMutations({
       setExtent: "earth/setExtent",
     }),
+    getCityInfo() {
+      this.$axios.get(`${window.globalConfig.baseURL}/v2/city/lookup`,{
+        params: {
+          location: '北京',
+          key: this.$constants.qweatherKey
+        }
+      }).then(res => {
+        console.log(`res`,res)
+      })
+    },
     // 设置经纬度网格
     setGridLayer(active) {
       if (active) {
