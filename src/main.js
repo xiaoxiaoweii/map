@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
@@ -5,6 +6,13 @@ import store from "./store";
 import "normalize.css/normalize.css";
 import './styles/index.scss'
 import * as L from 'leaflet'
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+let DefaultIcon = L.icon({
+          iconUrl: icon,
+          shadowUrl: iconShadow
+      });
+L.Marker.prototype.options.icon = DefaultIcon;
 import "leaflet/dist/leaflet.css";
 import "@/utils/leaflet_utils/leaflet.latlng-graticule.js";
 import jQuery from "jQuery";

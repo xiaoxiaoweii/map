@@ -152,10 +152,11 @@ export default {
       setExtent: "earth/setExtent",
     }),
     getCityInfo() {
-      this.$axios.get(`${window.globalConfig.baseURL}/v2/city/lookup`,{
+      this.$axios.get(`${window.globalConfig.baseURL}/v2/poi/lookup`,{
         params: {
-          location: '北京',
-          key: this.$constants.qweatherKey
+          location: '南京',
+          key: this.$constants.qweatherKey,
+          type: 'scenic' 
         }
       }).then(res => {
         console.log(`res`,res)

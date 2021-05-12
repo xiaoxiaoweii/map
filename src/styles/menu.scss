@@ -1,9 +1,20 @@
 #menu_wrapper {
     z-index: 1000;
     position: absolute;
-    left: 5px;
+    left: 20px;
     top: 100px;
-    background: #2c3e50;
     width: 100px;
-    height: 100px;
+    height: 500px;
+    .menu_item {
+        color: rgb(62, 70, 172);
+        text-align: center;
+        width: 100px;
+        height: 30px;
+        background: #ffffff;
+        opacity: 0.9;
+        margin-top: 5px;
+        line-height: 30px;
+        border-radius: 10px;
+        cursor: pointer;
+    }
 }
