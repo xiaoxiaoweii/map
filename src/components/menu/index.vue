@@ -5,7 +5,7 @@
       v-for="(item, index) in menuList"
       :key="index"
       :style="item.active ? 'color:#ffffff;background:rgb(62, 70, 172)' : ''"
-      @click="changeMenu(item,index)"
+      @click="changeMenu(item, index)"
     >
       {{ item.name }}
     </div>
@@ -18,48 +18,22 @@ export default {
     return {
       menuList: [
         {
-          type: "scenic",
-          name: "景点",
+          type: "weather",
+          name: "天气实况",
           active: false,
         },
         {
-          type: "scenic",
-          name: "天气",
+          type: "warning",
+          name: "预警预报",
           active: false,
         },
       ],
     };
   },
   methods: {
-    changeMenu(item,index) {
-      item.active = !item.active
-      if(item.type === 'scenic') {
-        if(item.active) {
-          window.map.on('click', (event) => {
-            const latlng = {
-              lat: event.latlng.lat,
-              lng: event.latlng.lng
-            }
-            var marker = L.marker([latlng.lat,latlng.lng]).addTo(window.map);
-            this.loadScenicData(latlng)
-          });
-        } else {
-          /* 销毁点击事件 */
-          window.map.off('click');
-        }
-      }
+    changeMenu(item, index) {
+      item.active = !item.active;
     },
-    loadScenicData(latlng) {
-      this.$axios.get(`${window.globalConfig.baseURL}/v2/poi/lookup`,{
-        params: {
-          location: `${latlng.lng},${latlng.lat}`,
-          key: this.$constants.qweatherKey,
-          type: 'scenic' 
-        }
-      }).then(res => {
-        console.log(`res`,res)
-      })
-    }
-  }
+  },
 };
 </script>

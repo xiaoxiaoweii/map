@@ -8,7 +8,7 @@
     <!-- 工具栏 -->
     <tool/>
     <!-- 菜单栏 -->
-    <menu-bar />
+    <!-- <menu-bar /> -->
   </div>
 </template>
 
