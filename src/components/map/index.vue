@@ -60,63 +60,16 @@ export default {
         latNum: null,
         lonNum: null,
       },
-      // 单屏属性
-      singleMapOptions: [
-        {
-          style: {
-            width: "100%",
-          },
-          name: "左屏",
-          id: "leftMap",
-          type: "left",
-          map: null,
-          marker: null,
-          grid: null,
-        },
-      ],
-      // 双屏属性
-      doubleScreenOptions: [
-        {
-          style: {
-            width: "50%",
-          },
-          name: "左屏",
-          id: "leftMap",
-          type: "left",
-          map: null,
-          marker: null,
-          grid: null,
-        },
-        {
-          style: {
-            width: "50%",
-          },
-          name: "右屏",
-          id: "rightMap",
-          type: "right",
-          map: null,
-          marker: null,
-          grid: null,
-        },
-      ],
     };
   },
   computed: {
     ...mapState({
-      doubleScreenFlag: (s) => s.earth.doubleScreenFlag,
       gridFlag: (s) => s.earth.gridFlag,
       distanceFlag: (s) => s.earth.distanceFlag,
       areaMeasureFlag: (s) => s.earth.areaMeasureFlag,
     }),
   },
   watch: {
-    // 是否双屏
-    doubleScreenFlag: {
-      handler: function (val) {
-        this.setDoubleScreen(val);
-      },
-      deep: true,
-    },
     // 是否载入经纬度网格
     gridFlag: {
       handler: function (val) {
@@ -144,24 +97,12 @@ export default {
     this.$nextTick(() => {
       // 地图初始化
       this.initMap();
-      this.getCityInfo()
     });
   },
   methods: {
     ...mapMutations({
       setExtent: "earth/setExtent",
     }),
-    getCityInfo() {
-      this.$axios.get(`${window.globalConfig.baseURL}/v2/poi/lookup`,{
-        params: {
-          location: '南京',
-          key: this.$constants.qweatherKey,
-          type: 'scenic' 
-        }
-      }).then(res => {
-        console.log(`res`,res)
-      })
-    },
     // 设置经纬度网格
     setGridLayer(active) {
       if (active) {
@@ -176,20 +117,6 @@ export default {
           e.grid = null;
         });
       }
-    },
-    // 设置双屏 传入 true 开启双屏 传入 false 关闭双屏
-    setDoubleScreen(active) {
-      // 移除现在的地图实例
-      this.mapList.forEach((e, i) => {
-        e.map.remove();
-      });
-      active
-        ? (this.mapList = this.doubleScreenOptions)
-        : (this.mapList = this.singleMapOptions);
-      // 重新初始化地图
-      this.$nextTick(() => {
-        this.initMap();
-      });
     },
     // 初始化地图
     initMap() {
