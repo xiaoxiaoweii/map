@@ -43,11 +43,22 @@ export default {
       mapList: [
         {
           style: {
-            width: "100%",
+            width: "50%",
           },
           name: "左屏",
           id: "leftMap",
           type: "left",
+          map: null,
+          marker: null,
+          grid: null,
+        },
+        {
+          style: {
+            width: "50%",
+          },
+          name: "右屏",
+          id: "rightMap",
+          type: "right",
           map: null,
           marker: null,
           grid: null,
